@@ -6,33 +6,70 @@
     <title>Trager Bos Portfolio</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 40px;
         }
         .dropdown {
-            position: relative;
             display: inline-block;
+            position: relative;
             margin-right: 20px;
+        }
+        .dropdown button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .dropdown button:hover {
+            background-color: #2980b9;
         }
         .dropdown-content {
             display: none;
             position: absolute;
-            background-color: #f9f9f9;
-            min-width: 160px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            background-color: #fff;
+            min-width: 200px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
             z-index: 1;
+            border-radius: 5px;
+            margin-top: 5px;
         }
         .dropdown-content a {
-            color: black;
+            color: #333;
             padding: 12px 16px;
             text-decoration: none;
             display: block;
+            transition: background-color 0.3s;
         }
         .dropdown-content a:hover {
-            background-color: #f1f1f1;
+            background-color: #ecf0f1;
         }
         .dropdown:hover .dropdown-content {
-            display: block; /* Show the dropdown on hover */
+            display: block;
+        }
+        .back-button {
+            display: none;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .back-button:hover {
+            background-color: #c0392b;
         }
     </style>
 </head>
@@ -57,7 +94,22 @@
         </div>
     </div>
 
-    <button onclick="window.history.back()">Back</button>
+    <script>
+        function addBackButton() {
+            const backButton = document.createElement('button');
+            backButton.textContent = "Back";
+            backButton.className = "back-button";
+            backButton.onclick = function() {
+                window.history.back();
+            };
+            document.body.appendChild(backButton);
+            backButton.style.display = 'block'; // Show button on project pages
+        }
 
+        // Call this function on each project page to add the back button
+        if (window.location.pathname !== "/index.html") {
+            addBackButton();
+        }
+    </script>
 </body>
 </html>
