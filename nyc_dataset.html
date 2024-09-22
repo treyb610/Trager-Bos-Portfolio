@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Trager Bos" />
+
+
+<title>NYC Real Estate Sales Analysis</title>
+
+<script src="nyc_dataset_files/header-attrs-2.27/header-attrs.js"></script>
+<script src="nyc_dataset_files/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="nyc_dataset_files/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
+<script src="nyc_dataset_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="nyc_dataset_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="nyc_dataset_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="nyc_dataset_files/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="nyc_dataset_files/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="nyc_dataset_files/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="nyc_dataset_files/navigation-1.1/tabsets.js"></script>
+<link href="nyc_dataset_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="nyc_dataset_files/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">NYC Real Estate Sales Analysis</h1>
+<h4 class="author">Trager Bos</h4>
+
+</div>
+
+
+<div id="overview" class="section level1">
+<h1>Overview:</h1>
+<p>In this analysis, we’ll explore the NYC real estate dataset to
+uncover trends in sale prices across different neighborhoods and
+property types.We’ll focus on understanding the relationship between
+property features (e.g., neighborhood, year built) and sale price.</p>
+</div>
+<div id="install-apropriate-libraries-packages" class="section level1">
+<h1>Install apropriate libraries &amp; packages</h1>
+<pre class="r"><code>install.packages(&quot;tidyverse&quot;)</code></pre>
+<pre><code>## 
+## The downloaded binary packages are in
+##  /var/folders/k7/3hkxc3916d94sh54b7xgkrfh0000gn/T//RtmpnIOHK0/downloaded_packages</code></pre>
+<pre class="r"><code>install.packages(&quot;knitr&quot;)</code></pre>
+<pre><code>## 
+## The downloaded binary packages are in
+##  /var/folders/k7/3hkxc3916d94sh54b7xgkrfh0000gn/T//RtmpnIOHK0/downloaded_packages</code></pre>
+<pre class="r"><code>install.packages(&quot;scales&quot;)</code></pre>
+<pre><code>## 
+## The downloaded binary packages are in
+##  /var/folders/k7/3hkxc3916d94sh54b7xgkrfh0000gn/T//RtmpnIOHK0/downloaded_packages</code></pre>
+<pre class="r"><code>install.packages(&quot;ggplot2&quot;)</code></pre>
+<pre><code>## 
+## The downloaded binary packages are in
+##  /var/folders/k7/3hkxc3916d94sh54b7xgkrfh0000gn/T//RtmpnIOHK0/downloaded_packages</code></pre>
+<pre class="r"><code>library(ggplot2)
+library(tidyverse)
+library(knitr)
+library(readr)
+library(scales)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;scales&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     discard</code></pre>
+<pre><code>## The following object is masked from &#39;package:readr&#39;:
+## 
+##     col_factor</code></pre>
+<pre class="r"><code>library(dplyr)
+library(lubridate)</code></pre>
+</div>
+<div id="import-document" class="section level1">
+<h1>Import document</h1>
+<pre class="r"><code>nyc_dataset &lt;- read_csv(&quot;~/Desktop/Data sets/nyc-rolling-sales.csv&quot;)</code></pre>
+<pre><code>## New names:
+## Rows: 84548 Columns: 22
+## ── Column specification
+## ──────────────────────────────────────────────────────── Delimiter: &quot;,&quot; chr
+## (10): NEIGHBORHOOD, BUILDING CLASS CATEGORY, TAX CLASS AT PRESENT, BUIL... dbl
+## (10): ...1, BOROUGH, BLOCK, LOT, ZIP CODE, RESIDENTIAL UNITS, COMMERCIA... lgl
+## (1): EASE-MENT dttm (1): SALE DATE
+## ℹ Use `spec()` to retrieve the full column specification for this data. ℹ
+## Specify the column types or set `show_col_types = FALSE` to quiet this message.
+## • `` -&gt; `...1`</code></pre>
+</div>
+<div id="clean-and-prepare-data" class="section level1">
+<h1>Clean and prepare data</h1>
+<pre class="r"><code>nyc_dataset &lt;- nyc_dataset %&gt;%
+  select(-`EASE-MENT`, -`APARTMENT NUMBER`)
+
+colnames(nyc_dataset) &lt;- c(&quot;id&quot;, &quot;borough&quot;, &quot;neighborhood&quot;, &quot;building_class_category&quot;, 
+                           &quot;tax_class_present&quot;, &quot;block&quot;, &quot;lot&quot;, &quot;building_class_present&quot;, 
+                           &quot;address&quot;, &quot;zip_code&quot;, &quot;residential_units&quot;, &quot;commercial_units&quot;, 
+                           &quot;total_units&quot;, &quot;land_square_feet&quot;, &quot;gross_square_feet&quot;, 
+                           &quot;year_built&quot;, &quot;tax_class_sale_time&quot;, &quot;building_class_sale_time&quot;, 
+                           &quot;sale_price&quot;, &quot;sale_date&quot;)
+
+# Convert sale_price to numeric and clean data
+nyc_dataset &lt;- nyc_dataset %&gt;%
+  mutate(sale_price = as.numeric(gsub(&quot;[^0-9.]&quot;, &quot;&quot;, sale_price))) %&gt;%
+  filter(!is.na(sale_price))</code></pre>
+</div>
+<div id="quick-overview" class="section level1">
+<h1>Quick overview</h1>
+<pre class="r"><code>colnames(nyc_dataset) #List of column names</code></pre>
+<pre><code>##  [1] &quot;id&quot;                       &quot;borough&quot;                 
+##  [3] &quot;neighborhood&quot;             &quot;building_class_category&quot; 
+##  [5] &quot;tax_class_present&quot;        &quot;block&quot;                   
+##  [7] &quot;lot&quot;                      &quot;building_class_present&quot;  
+##  [9] &quot;address&quot;                  &quot;zip_code&quot;                
+## [11] &quot;residential_units&quot;        &quot;commercial_units&quot;        
+## [13] &quot;total_units&quot;              &quot;land_square_feet&quot;        
+## [15] &quot;gross_square_feet&quot;        &quot;year_built&quot;              
+## [17] &quot;tax_class_sale_time&quot;      &quot;building_class_sale_time&quot;
+## [19] &quot;sale_price&quot;               &quot;sale_date&quot;</code></pre>
+<pre class="r"><code>ncol(nyc_dataset) #How many columns are in data frame?</code></pre>
+<pre><code>## [1] 20</code></pre>
+<pre class="r"><code>nrow(nyc_dataset) #How many rows are in data frame?</code></pre>
+<pre><code>## [1] 69987</code></pre>
+<pre class="r"><code>dim(nyc_dataset)  #Dimensions of the data frame?</code></pre>
+<pre><code>## [1] 69987    20</code></pre>
+<pre class="r"><code>head(nyc_dataset)  #See the first 6 rows of data frame. </code></pre>
+<pre><code>## # A tibble: 6 × 20
+##      id borough neighborhood  building_class_category    tax_class_present block
+##   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;         &lt;chr&gt;                      &lt;chr&gt;             &lt;dbl&gt;
+## 1     4       1 ALPHABET CITY 07 RENTALS - WALKUP APART… 2A                  392
+## 2     7       1 ALPHABET CITY 07 RENTALS - WALKUP APART… 2B                  402
+## 3     8       1 ALPHABET CITY 07 RENTALS - WALKUP APART… 2A                  404
+## 4    10       1 ALPHABET CITY 07 RENTALS - WALKUP APART… 2B                  406
+## 5    13       1 ALPHABET CITY 08 RENTALS - ELEVATOR APA… 2                   387
+## 6    15       1 ALPHABET CITY 08 RENTALS - ELEVATOR APA… 2B                  400
+## # ℹ 14 more variables: lot &lt;dbl&gt;, building_class_present &lt;chr&gt;, address &lt;chr&gt;,
+## #   zip_code &lt;dbl&gt;, residential_units &lt;dbl&gt;, commercial_units &lt;dbl&gt;,
+## #   total_units &lt;dbl&gt;, land_square_feet &lt;chr&gt;, gross_square_feet &lt;chr&gt;,
+## #   year_built &lt;dbl&gt;, tax_class_sale_time &lt;dbl&gt;,
+## #   building_class_sale_time &lt;chr&gt;, sale_price &lt;dbl&gt;, sale_date &lt;dttm&gt;</code></pre>
+<pre class="r"><code>str(nyc_dataset)  #See list of columns and data types (numeric, character, etc)</code></pre>
+<pre><code>## tibble [69,987 × 20] (S3: tbl_df/tbl/data.frame)
+##  $ id                      : num [1:69987] 4 7 8 10 13 15 16 17 18 19 ...
+##  $ borough                 : num [1:69987] 1 1 1 1 1 1 1 1 1 1 ...
+##  $ neighborhood            : chr [1:69987] &quot;ALPHABET CITY&quot; &quot;ALPHABET CITY&quot; &quot;ALPHABET CITY&quot; &quot;ALPHABET CITY&quot; ...
+##  $ building_class_category : chr [1:69987] &quot;07 RENTALS - WALKUP APARTMENTS&quot; &quot;07 RENTALS - WALKUP APARTMENTS&quot; &quot;07 RENTALS - WALKUP APARTMENTS&quot; &quot;07 RENTALS - WALKUP APARTMENTS&quot; ...
+##  $ tax_class_present       : chr [1:69987] &quot;2A&quot; &quot;2B&quot; &quot;2A&quot; &quot;2B&quot; ...
+##  $ block                   : num [1:69987] 392 402 404 406 387 400 373 373 373 373 ...
+##  $ lot                     : num [1:69987] 6 21 55 32 153 21 40 40 40 40 ...
+##  $ building_class_present  : chr [1:69987] &quot;C2&quot; &quot;C4&quot; &quot;C2&quot; &quot;C4&quot; ...
+##  $ address                 : chr [1:69987] &quot;153 AVENUE B&quot; &quot;154 EAST 7TH STREET&quot; &quot;301 EAST 10TH   STREET&quot; &quot;210 AVENUE B&quot; ...
+##  $ zip_code                : num [1:69987] 10009 10009 10009 10009 10009 ...
+##  $ residential_units       : num [1:69987] 5 10 6 8 24 10 0 0 0 0 ...
+##  $ commercial_units        : num [1:69987] 0 0 0 0 0 0 0 0 0 0 ...
+##  $ total_units             : num [1:69987] 5 10 6 8 24 10 0 0 0 0 ...
+##  $ land_square_feet        : chr [1:69987] &quot;1633&quot; &quot;2272&quot; &quot;2369&quot; &quot;1750&quot; ...
+##  $ gross_square_feet       : chr [1:69987] &quot;6440&quot; &quot;6794&quot; &quot;4615&quot; &quot;4226&quot; ...
+##  $ year_built              : num [1:69987] 1900 1913 1900 1920 1920 ...
+##  $ tax_class_sale_time     : num [1:69987] 2 2 2 2 2 2 2 2 2 2 ...
+##  $ building_class_sale_time: chr [1:69987] &quot;C2&quot; &quot;C4&quot; &quot;C2&quot; &quot;C4&quot; ...
+##  $ sale_price              : num [1:69987] 6625000 3936272 8000000 3192840 16232000 ...
+##  $ sale_date               : POSIXct[1:69987], format: &quot;2017-07-19&quot; &quot;2016-09-23&quot; ...</code></pre>
+<pre class="r"><code>summary(nyc_dataset)  #Statistical summary of data. Mainly for numerics</code></pre>
+<pre><code>##        id           borough      neighborhood       building_class_category
+##  Min.   :    4   Min.   :1.000   Length:69987       Length:69987           
+##  1st Qu.: 4182   1st Qu.:2.000   Class :character   Class :character       
+##  Median : 8989   Median :3.000   Mode  :character   Mode  :character       
+##  Mean   :10288   Mean   :2.922                                             
+##  3rd Qu.:15874   3rd Qu.:4.000                                             
+##  Max.   :26738   Max.   :5.000                                             
+##  tax_class_present      block            lot         building_class_present
+##  Length:69987       Min.   :    1   Min.   :   1.0   Length:69987          
+##  Class :character   1st Qu.: 1348   1st Qu.:  22.0   Class :character      
+##  Mode  :character   Median : 3378   Median :  50.0   Mode  :character      
+##                     Mean   : 4196   Mean   : 373.8                         
+##                     3rd Qu.: 6186   3rd Qu.: 709.0                         
+##                     Max.   :16319   Max.   :9106.0                         
+##    address             zip_code     residential_units commercial_units   
+##  Length:69987       Min.   :    0   Min.   :   0.0    Min.   :   0.0000  
+##  Class :character   1st Qu.:10306   1st Qu.:   0.0    1st Qu.:   0.0000  
+##  Mode  :character   Median :11209   Median :   1.0    Median :   0.0000  
+##                     Mean   :10741   Mean   :   1.9    Mean   :   0.1725  
+##                     3rd Qu.:11249   3rd Qu.:   2.0    3rd Qu.:   0.0000  
+##                     Max.   :11694   Max.   :1844.0    Max.   :2261.0000  
+##   total_units       land_square_feet   gross_square_feet    year_built  
+##  Min.   :   0.000   Length:69987       Length:69987       Min.   :   0  
+##  1st Qu.:   0.000   Class :character   Class :character   1st Qu.:1920  
+##  Median :   1.000   Mode  :character   Mode  :character   Median :1937  
+##  Mean   :   2.092                                         Mean   :1799  
+##  3rd Qu.:   2.000                                         3rd Qu.:1965  
+##  Max.   :2261.000                                         Max.   :2017  
+##  tax_class_sale_time building_class_sale_time   sale_price       
+##  Min.   :1.000       Length:69987             Min.   :0.000e+00  
+##  1st Qu.:1.000       Class :character         1st Qu.:2.250e+05  
+##  Median :2.000       Mode  :character         Median :5.300e+05  
+##  Mean   :1.642                                Mean   :1.276e+06  
+##  3rd Qu.:2.000                                3rd Qu.:9.500e+05  
+##  Max.   :4.000                                Max.   :2.210e+09  
+##    sale_date                     
+##  Min.   :2016-09-01 00:00:00.00  
+##  1st Qu.:2016-11-30 00:00:00.00  
+##  Median :2017-02-28 00:00:00.00  
+##  Mean   :2017-02-27 21:22:54.48  
+##  3rd Qu.:2017-05-31 00:00:00.00  
+##  Max.   :2017-08-31 00:00:00.00</code></pre>
+<pre class="r"><code>names(nyc_dataset)</code></pre>
+<pre><code>##  [1] &quot;id&quot;                       &quot;borough&quot;                 
+##  [3] &quot;neighborhood&quot;             &quot;building_class_category&quot; 
+##  [5] &quot;tax_class_present&quot;        &quot;block&quot;                   
+##  [7] &quot;lot&quot;                      &quot;building_class_present&quot;  
+##  [9] &quot;address&quot;                  &quot;zip_code&quot;                
+## [11] &quot;residential_units&quot;        &quot;commercial_units&quot;        
+## [13] &quot;total_units&quot;              &quot;land_square_feet&quot;        
+## [15] &quot;gross_square_feet&quot;        &quot;year_built&quot;              
+## [17] &quot;tax_class_sale_time&quot;      &quot;building_class_sale_time&quot;
+## [19] &quot;sale_price&quot;               &quot;sale_date&quot;</code></pre>
+</div>
+<div id="quick-glance-summary" class="section level1">
+<h1>Quick glance summary</h1>
+<pre class="r"><code># Increase scipen to avoid scientific notation
+options(scipen = 999)
+
+# Summary statistics for sale price
+summary(nyc_dataset$sale_price)</code></pre>
+<pre><code>##       Min.    1st Qu.     Median       Mean    3rd Qu.       Max. 
+##          0     225000     530000    1276456     950000 2210000000</code></pre>
+</div>
+<div id="visualizations" class="section level1">
+<h1>Visualizations</h1>
+<pre class="r"><code># Top 10 most popular neighborhoods
+neighborhood_counts &lt;- nyc_dataset %&gt;%
+  count(neighborhood)
+
+top_neighborhoods &lt;- neighborhood_counts %&gt;%
+  arrange(desc(n)) %&gt;%
+  top_n(10)</code></pre>
+<pre><code>## Selecting by n</code></pre>
+<pre class="r"><code>ggplot(top_neighborhoods, aes(x = reorder(neighborhood, n), y = n, fill = neighborhood)) +
+  geom_bar(stat = &quot;identity&quot;) +
+  labs(title = &quot;Top 10 Most Popular Neighborhoods&quot;,
+       x = &quot;Neighborhood&quot;,
+       y = &quot;Count&quot;) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 10),
+    axis.title = element_text(size = 12),
+    plot.title = element_text(size = 14),
+    axis.text.y = element_text(size = 10),
+    plot.margin = margin(5, 5, 5, 0, &quot;pt&quot;)
+  )</code></pre>
+<p><img src="nyc_dataset_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code># Average Sale Price by Borough
+nyc_dataset &lt;- nyc_dataset %&gt;%
+  mutate(borough = recode(borough,
+                           `1` = &quot;Manhattan&quot;,
+                           `2` = &quot;Brooklyn&quot;,
+                           `3` = &quot;Queens&quot;,
+                           `4` = &quot;Bronx&quot;,
+                           `5` = &quot;Staten Island&quot;))
+
+average_sale_price &lt;- nyc_dataset %&gt;%
+  group_by(borough) %&gt;%
+  summarize(avg_sale_price = mean(sale_price, na.rm = TRUE))
+
+ggplot(average_sale_price, aes(x = reorder(borough, avg_sale_price), y = avg_sale_price, fill = borough)) +
+  geom_bar(stat = &quot;identity&quot;) +
+  labs(title = &quot;Average Sale Price by Borough&quot;,
+       x = &quot;Borough&quot;,
+       y = &quot;Average Sale Price&quot;) +
+  scale_y_continuous(labels = scales::comma) +  
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 10),
+        axis.title = element_text(size = 12),
+        plot.title = element_text(size = 14),
+        plot.margin = margin(5, 5, 5, 0, &quot;pt&quot;)) +
+  theme_minimal()</code></pre>
+<p><img src="nyc_dataset_files/figure-html/unnamed-chunk-6-2.png" width="672" /></p>
+<pre class="r"><code># Sales trend over time
+monthly_sales &lt;- nyc_dataset %&gt;%
+  mutate(month = floor_date(sale_date, &quot;month&quot;)) %&gt;%
+  group_by(month) %&gt;%
+  summarize(total_sales = n())  
+
+ggplot(monthly_sales, aes(x = month, y = total_sales)) +
+  geom_line(color = &quot;blue&quot;) +
+  geom_point(color = &quot;blue&quot;) +
+  labs(title = &quot;Sales Trend Over Time&quot;,
+       x = &quot;Month&quot;,
+       y = &quot;Total Sales&quot;) +
+  theme_minimal()</code></pre>
+<p><img src="nyc_dataset_files/figure-html/unnamed-chunk-6-3.png" width="672" /></p>
+<pre class="r"><code># Top 10 most popular blocks
+block_counts &lt;- nyc_dataset %&gt;%
+  count(block)
+
+top_blocks &lt;- block_counts %&gt;%
+  arrange(desc(n)) %&gt;%
+  top_n(10)</code></pre>
+<pre><code>## Selecting by n</code></pre>
+<pre class="r"><code>ggplot(top_blocks, aes(x = reorder(block, n), y = n, fill = block)) +
+  geom_bar(stat = &quot;identity&quot;) +
+  labs(title = &quot;Top 10 Most Popular Blocks&quot;,
+       x = &quot;Block&quot;,
+       y = &quot;Count&quot;) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 10),
+        axis.title = element_text(size = 12),
+        plot.title = element_text(size = 14),
+        plot.margin = margin(5, 5, 5, 0, &quot;pt&quot;)) +
+  theme_minimal()</code></pre>
+<p><img src="nyc_dataset_files/figure-html/unnamed-chunk-6-4.png" width="672" /></p>
+<pre class="r"><code># Sale Price by Year Built
+filtered_nyc_dataset &lt;- nyc_dataset %&gt;%
+  filter(year_built != 0)
+
+ggplot(filtered_nyc_dataset, aes(x = year_built, y = sale_price)) +
+  geom_point(color = &quot;blue&quot;) +  
+  geom_smooth(method = &quot;lm&quot;, color = &quot;red&quot;) +  
+  labs(title = &quot;Sale Price vs Year Built&quot;,
+       x = &quot;Year Built&quot;,
+       y = &quot;Sale Price&quot;) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 10),
+        axis.title = element_text(size = 12),
+        plot.title = element_text(size = 14),
+        plot.margin = margin(5, 5, 5, 0, &quot;pt&quot;)) +
+  scale_x_continuous(limits = c(1800, NA)) +  
+  scale_y_continuous(labels = scales::comma)</code></pre>
+<pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
+<pre><code>## Warning: Removed 1 row containing non-finite outside the scale range
+## (`stat_smooth()`).</code></pre>
+<pre><code>## Warning: Removed 1 row containing missing values or values outside the scale range
+## (`geom_point()`).</code></pre>
+<p><img src="nyc_dataset_files/figure-html/unnamed-chunk-6-5.png" width="672" /></p>
+<pre class="r"><code># Sale Price vs Residential Units
+ggplot(nyc_dataset, aes(x = residential_units, y = sale_price)) +
+  geom_point(color = &quot;blue&quot;) +  
+  geom_smooth(method = &quot;lm&quot;, color = &quot;red&quot;) +  
+  labs(title = &quot;Sale Price vs Residential Units&quot;,
+       x = &quot;Residential Units&quot;,
+       y = &quot;Sale Price&quot;) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 10),
+        axis.title = element_text(size = 12),
+        plot.title = element_text(size = 14),
+        plot.margin = margin(5, 5, 5, 0, &quot;pt&quot;)) +
+  scale_y_continuous(labels = scales::comma)</code></pre>
+<pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
+<p><img src="nyc_dataset_files/figure-html/unnamed-chunk-6-6.png" width="672" /></p>
+</div>
+<div id="conclusion" class="section level1">
+<h1>Conclusion:</h1>
+<p>Looking at the data, Manhattan is, on average, the most expensive and
+most popular borough in New York City, and the 5066 block is the most
+popular block within NYC. Sales trends seem to drop in the months of
+October, February, and April, with a significant drop in August of 2017.
+The year built seems to have a very slight impact on sale price compared
+to the number of residential units, which has a much greater impact.</p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Trager Bos" />
+
+
+<title>Exploratory Data Analysis of Used Cars</title>
+
+<script src="used_car_analysis_files/header-attrs-2.27/header-attrs.js"></script>
+<script src="used_car_analysis_files/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="used_car_analysis_files/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
+<script src="used_car_analysis_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="used_car_analysis_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="used_car_analysis_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="used_car_analysis_files/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="used_car_analysis_files/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="used_car_analysis_files/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="used_car_analysis_files/navigation-1.1/tabsets.js"></script>
+<link href="used_car_analysis_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="used_car_analysis_files/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Exploratory Data Analysis of Used Cars</h1>
+<h4 class="author">Trager Bos</h4>
+
+</div>
+
+
+<div id="intro" class="section level1">
+<h1>Intro:</h1>
+<p>In this notebook, we will perform an exploratory data analysis (EDA)
+on a used car dataset. The primary goals are to clean and preprocess the
+data, understand the dataset’s structure, and visualize critical
+relationships among variables. To uncover insights into the used car
+market, we will analyze various attributes, including price, mileage,
+and model year. Additionally, we will create visualizations to highlight
+trends and patterns, such as the relationship between mileage and cost,
+and identify the most popular and expensive car brands. This analysis
+aims to provide a comprehensive overview of the factors affecting used
+car pricing and performance.</p>
+</div>
+<div id="load-libraries" class="section level1">
+<h1>Load libraries</h1>
+<pre class="r"><code>install.packages(&quot;tidyverse&quot;)</code></pre>
+<pre><code>## 
+## The downloaded binary packages are in
+##  /var/folders/k7/3hkxc3916d94sh54b7xgkrfh0000gn/T//Rtmp0dXcQg/downloaded_packages</code></pre>
+<pre class="r"><code>install.packages(&quot;knitr&quot;)</code></pre>
+<pre><code>## 
+## The downloaded binary packages are in
+##  /var/folders/k7/3hkxc3916d94sh54b7xgkrfh0000gn/T//Rtmp0dXcQg/downloaded_packages</code></pre>
+<pre class="r"><code>install.packages(&quot;scales&quot;)</code></pre>
+<pre><code>## 
+## The downloaded binary packages are in
+##  /var/folders/k7/3hkxc3916d94sh54b7xgkrfh0000gn/T//Rtmp0dXcQg/downloaded_packages</code></pre>
+<pre class="r"><code>install.packages(&quot;ggplot2&quot;)</code></pre>
+<pre><code>## 
+## The downloaded binary packages are in
+##  /var/folders/k7/3hkxc3916d94sh54b7xgkrfh0000gn/T//Rtmp0dXcQg/downloaded_packages</code></pre>
+<pre class="r"><code>install.packages(&quot;corrplot&quot;)</code></pre>
+<pre><code>## 
+## The downloaded binary packages are in
+##  /var/folders/k7/3hkxc3916d94sh54b7xgkrfh0000gn/T//Rtmp0dXcQg/downloaded_packages</code></pre>
+<pre class="r"><code>install.packages(&quot;reshape2&quot;)</code></pre>
+<pre><code>## 
+## The downloaded binary packages are in
+##  /var/folders/k7/3hkxc3916d94sh54b7xgkrfh0000gn/T//Rtmp0dXcQg/downloaded_packages</code></pre>
+<pre class="r"><code>library(corrplot)</code></pre>
+<pre><code>## corrplot 0.94 loaded</code></pre>
+<pre class="r"><code>library(ggplot2)
+library(tidyverse)
+library(knitr)
+library(readr)
+library(scales)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;scales&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     discard</code></pre>
+<pre><code>## The following object is masked from &#39;package:readr&#39;:
+## 
+##     col_factor</code></pre>
+<pre class="r"><code>library(dplyr)
+library(lubridate)
+library(reshape2)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;reshape2&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:tidyr&#39;:
+## 
+##     smiths</code></pre>
+</div>
+<div id="import-dataset" class="section level1">
+<h1>Import dataset</h1>
+<pre class="r"><code>used_cars_dataset &lt;- read_csv(&quot;~/Desktop/Data sets/used_cars.csv&quot;)</code></pre>
+<pre><code>## Rows: 4009 Columns: 12
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr (11): brand, model, milage, fuel_type, engine, transmission, ext_col, in...
+## dbl  (1): model_year
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div id="cleaning" class="section level1">
+<h1>Cleaning</h1>
+<pre class="r"><code># Rename the column
+colnames(used_cars_dataset)[colnames(used_cars_dataset) == &quot;milage&quot;] &lt;- &quot;mileage&quot;
+
+# Remove any non-numeric characters (if necessary)
+used_cars_dataset$price &lt;- gsub(&quot;[^0-9.]&quot;, &quot;&quot;, used_cars_dataset$price)
+
+# Convert the cleaned character column to numeric
+used_cars_dataset$price &lt;- as.numeric(used_cars_dataset$price)
+
+# Check the structure to confirm the change
+str(used_cars_dataset)</code></pre>
+<pre><code>## spc_tbl_ [4,009 × 12] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+##  $ brand       : chr [1:4009] &quot;Ford&quot; &quot;Hyundai&quot; &quot;Lexus&quot; &quot;INFINITI&quot; ...
+##  $ model       : chr [1:4009] &quot;Utility Police Interceptor Base&quot; &quot;Palisade SEL&quot; &quot;RX 350 RX 350&quot; &quot;Q50 Hybrid Sport&quot; ...
+##  $ model_year  : num [1:4009] 2013 2021 2022 2015 2021 ...
+##  $ mileage     : chr [1:4009] &quot;51,000 mi.&quot; &quot;34,742 mi.&quot; &quot;22,372 mi.&quot; &quot;88,900 mi.&quot; ...
+##  $ fuel_type   : chr [1:4009] &quot;E85 Flex Fuel&quot; &quot;Gasoline&quot; &quot;Gasoline&quot; &quot;Hybrid&quot; ...
+##  $ engine      : chr [1:4009] &quot;300.0HP 3.7L V6 Cylinder Engine Flex Fuel Capability&quot; &quot;3.8L V6 24V GDI DOHC&quot; &quot;3.5 Liter DOHC&quot; &quot;354.0HP 3.5L V6 Cylinder Engine Gas/Electric Hybrid&quot; ...
+##  $ transmission: chr [1:4009] &quot;6-Speed A/T&quot; &quot;8-Speed Automatic&quot; &quot;Automatic&quot; &quot;7-Speed A/T&quot; ...
+##  $ ext_col     : chr [1:4009] &quot;Black&quot; &quot;Moonlight Cloud&quot; &quot;Blue&quot; &quot;Black&quot; ...
+##  $ int_col     : chr [1:4009] &quot;Black&quot; &quot;Gray&quot; &quot;Black&quot; &quot;Black&quot; ...
+##  $ accident    : chr [1:4009] &quot;At least 1 accident or damage reported&quot; &quot;At least 1 accident or damage reported&quot; &quot;None reported&quot; &quot;None reported&quot; ...
+##  $ clean_title : chr [1:4009] &quot;Yes&quot; &quot;Yes&quot; NA &quot;Yes&quot; ...
+##  $ price       : num [1:4009] 10300 38005 54598 15500 34999 ...
+##  - attr(*, &quot;spec&quot;)=
+##   .. cols(
+##   ..   brand = col_character(),
+##   ..   model = col_character(),
+##   ..   model_year = col_double(),
+##   ..   milage = col_character(),
+##   ..   fuel_type = col_character(),
+##   ..   engine = col_character(),
+##   ..   transmission = col_character(),
+##   ..   ext_col = col_character(),
+##   ..   int_col = col_character(),
+##   ..   accident = col_character(),
+##   ..   clean_title = col_character(),
+##   ..   price = col_character()
+##   .. )
+##  - attr(*, &quot;problems&quot;)=&lt;externalptr&gt;</code></pre>
+<pre class="r"><code>sum(is.na(used_cars_dataset$price))</code></pre>
+<pre><code>## [1] 0</code></pre>
+<pre class="r"><code># Clean and convert the mileage column
+used_cars_dataset$mileage &lt;- gsub(&quot; mi\\.$&quot;, &quot;&quot;, used_cars_dataset$mileage)
+used_cars_dataset$mileage &lt;- gsub(&quot;,&quot;, &quot;&quot;, used_cars_dataset$mileage)
+used_cars_dataset$mileage &lt;- as.numeric(used_cars_dataset$mileage)</code></pre>
+</div>
+<div id="overview-of-dataset" class="section level1">
+<h1>Overview of dataset</h1>
+<pre class="r"><code>colnames(used_cars_dataset) #List of column names</code></pre>
+<pre><code>##  [1] &quot;brand&quot;        &quot;model&quot;        &quot;model_year&quot;   &quot;mileage&quot;      &quot;fuel_type&quot;   
+##  [6] &quot;engine&quot;       &quot;transmission&quot; &quot;ext_col&quot;      &quot;int_col&quot;      &quot;accident&quot;    
+## [11] &quot;clean_title&quot;  &quot;price&quot;</code></pre>
+<pre class="r"><code>ncol(used_cars_dataset) #How many columns are in data frame?</code></pre>
+<pre><code>## [1] 12</code></pre>
+<pre class="r"><code>nrow(used_cars_dataset) #How many rows are in data frame?</code></pre>
+<pre><code>## [1] 4009</code></pre>
+<pre class="r"><code>dim(used_cars_dataset)  #Dimensions of the data frame?</code></pre>
+<pre><code>## [1] 4009   12</code></pre>
+<pre class="r"><code>head(used_cars_dataset)  #See the first 6 rows of data frame. </code></pre>
+<pre><code>## # A tibble: 6 × 12
+##   brand   model model_year mileage fuel_type engine transmission ext_col int_col
+##   &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;        &lt;chr&gt;   &lt;chr&gt;  
+## 1 Ford    Util…       2013   51000 E85 Flex… 300.0… 6-Speed A/T  Black   Black  
+## 2 Hyundai Pali…       2021   34742 Gasoline  3.8L … 8-Speed Aut… Moonli… Gray   
+## 3 Lexus   RX 3…       2022   22372 Gasoline  3.5 L… Automatic    Blue    Black  
+## 4 INFINI… Q50 …       2015   88900 Hybrid    354.0… 7-Speed A/T  Black   Black  
+## 5 Audi    Q3 4…       2021    9835 Gasoline  2.0L … 8-Speed Aut… Glacie… Black  
+## 6 Acura   ILX …       2016  136397 Gasoline  2.4 L… F            Silver  Ebony. 
+## # ℹ 3 more variables: accident &lt;chr&gt;, clean_title &lt;chr&gt;, price &lt;dbl&gt;</code></pre>
+<pre class="r"><code>str(used_cars_dataset)  #See list of columns and data types (numeric, character, etc)</code></pre>
+<pre><code>## spc_tbl_ [4,009 × 12] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+##  $ brand       : chr [1:4009] &quot;Ford&quot; &quot;Hyundai&quot; &quot;Lexus&quot; &quot;INFINITI&quot; ...
+##  $ model       : chr [1:4009] &quot;Utility Police Interceptor Base&quot; &quot;Palisade SEL&quot; &quot;RX 350 RX 350&quot; &quot;Q50 Hybrid Sport&quot; ...
+##  $ model_year  : num [1:4009] 2013 2021 2022 2015 2021 ...
+##  $ mileage     : num [1:4009] 51000 34742 22372 88900 9835 ...
+##  $ fuel_type   : chr [1:4009] &quot;E85 Flex Fuel&quot; &quot;Gasoline&quot; &quot;Gasoline&quot; &quot;Hybrid&quot; ...
+##  $ engine      : chr [1:4009] &quot;300.0HP 3.7L V6 Cylinder Engine Flex Fuel Capability&quot; &quot;3.8L V6 24V GDI DOHC&quot; &quot;3.5 Liter DOHC&quot; &quot;354.0HP 3.5L V6 Cylinder Engine Gas/Electric Hybrid&quot; ...
+##  $ transmission: chr [1:4009] &quot;6-Speed A/T&quot; &quot;8-Speed Automatic&quot; &quot;Automatic&quot; &quot;7-Speed A/T&quot; ...
+##  $ ext_col     : chr [1:4009] &quot;Black&quot; &quot;Moonlight Cloud&quot; &quot;Blue&quot; &quot;Black&quot; ...
+##  $ int_col     : chr [1:4009] &quot;Black&quot; &quot;Gray&quot; &quot;Black&quot; &quot;Black&quot; ...
+##  $ accident    : chr [1:4009] &quot;At least 1 accident or damage reported&quot; &quot;At least 1 accident or damage reported&quot; &quot;None reported&quot; &quot;None reported&quot; ...
+##  $ clean_title : chr [1:4009] &quot;Yes&quot; &quot;Yes&quot; NA &quot;Yes&quot; ...
+##  $ price       : num [1:4009] 10300 38005 54598 15500 34999 ...
+##  - attr(*, &quot;spec&quot;)=
+##   .. cols(
+##   ..   brand = col_character(),
+##   ..   model = col_character(),
+##   ..   model_year = col_double(),
+##   ..   milage = col_character(),
+##   ..   fuel_type = col_character(),
+##   ..   engine = col_character(),
+##   ..   transmission = col_character(),
+##   ..   ext_col = col_character(),
+##   ..   int_col = col_character(),
+##   ..   accident = col_character(),
+##   ..   clean_title = col_character(),
+##   ..   price = col_character()
+##   .. )
+##  - attr(*, &quot;problems&quot;)=&lt;externalptr&gt;</code></pre>
+<pre class="r"><code>summary(used_cars_dataset)  #Statistical summary of data. Mainly for numerics</code></pre>
+<pre><code>##     brand              model             model_year      mileage      
+##  Length:4009        Length:4009        Min.   :1974   Min.   :   100  
+##  Class :character   Class :character   1st Qu.:2012   1st Qu.: 23044  
+##  Mode  :character   Mode  :character   Median :2017   Median : 52775  
+##                                        Mean   :2016   Mean   : 64718  
+##                                        3rd Qu.:2020   3rd Qu.: 94100  
+##                                        Max.   :2024   Max.   :405000  
+##   fuel_type            engine          transmission         ext_col         
+##  Length:4009        Length:4009        Length:4009        Length:4009       
+##  Class :character   Class :character   Class :character   Class :character  
+##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+##                                                                             
+##                                                                             
+##                                                                             
+##    int_col            accident         clean_title            price        
+##  Length:4009        Length:4009        Length:4009        Min.   :   2000  
+##  Class :character   Class :character   Class :character   1st Qu.:  17200  
+##  Mode  :character   Mode  :character   Mode  :character   Median :  31000  
+##                                                           Mean   :  44553  
+##                                                           3rd Qu.:  49990  
+##                                                           Max.   :2954083</code></pre>
+<pre class="r"><code>names(used_cars_dataset)</code></pre>
+<pre><code>##  [1] &quot;brand&quot;        &quot;model&quot;        &quot;model_year&quot;   &quot;mileage&quot;      &quot;fuel_type&quot;   
+##  [6] &quot;engine&quot;       &quot;transmission&quot; &quot;ext_col&quot;      &quot;int_col&quot;      &quot;accident&quot;    
+## [11] &quot;clean_title&quot;  &quot;price&quot;</code></pre>
+</div>
+<div id="quick-glance-summary" class="section level1">
+<h1>Quick glance summary</h1>
+<pre class="r"><code># Summary statistics for price
+summary(used_cars_dataset$price)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##    2000   17200   31000   44553   49990 2954083</code></pre>
+<pre class="r"><code># Summary statistics for other relevant numeric columns
+summary(used_cars_dataset[, c(&quot;mileage&quot;, &quot;model_year&quot;, &quot;price&quot;)]) </code></pre>
+<pre><code>##     mileage         model_year       price        
+##  Min.   :   100   Min.   :1974   Min.   :   2000  
+##  1st Qu.: 23044   1st Qu.:2012   1st Qu.:  17200  
+##  Median : 52775   Median :2017   Median :  31000  
+##  Mean   : 64718   Mean   :2016   Mean   :  44553  
+##  3rd Qu.: 94100   3rd Qu.:2020   3rd Qu.:  49990  
+##  Max.   :405000   Max.   :2024   Max.   :2954083</code></pre>
+</div>
+<div id="visualizations" class="section level1">
+<h1>Visualizations</h1>
+<pre class="r"><code># Bar chart of the 10 most popular brands
+top_brands &lt;- used_cars_dataset %&gt;%
+  group_by(brand) %&gt;%
+  summarize(count = n()) %&gt;%
+  arrange(desc(count)) %&gt;%
+  slice_head(n = 10)
+
+ggplot(top_brands, aes(x = reorder(brand, count), y = count, fill = brand)) +
+  geom_bar(stat = &quot;identity&quot;) +
+  labs(title = &quot;Top 10 Most Popular Brands&quot;,
+       x = &quot;Brand&quot;,
+       y = &quot;Count&quot;) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))</code></pre>
+<p><img src="used_car_analysis_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code># Calculate the average price for each brand and select the top 10 most expensive
+top_expensive_brands &lt;- used_cars_dataset %&gt;%
+  group_by(brand) %&gt;%
+  summarize(avg_price = mean(price, na.rm = TRUE)) %&gt;%
+  arrange(desc(avg_price)) %&gt;%
+  slice_head(n = 10)
+
+# Bar chart of the 10 most expensive brands
+ggplot(top_expensive_brands, aes(x = reorder(brand, avg_price), y = avg_price, fill = brand)) +
+  geom_bar(stat = &quot;identity&quot;) +
+  labs(title = &quot;Top 10 Most Expensive Brands&quot;,
+       x = &quot;Brand&quot;,
+       y = &quot;Average Price&quot;) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))</code></pre>
+<p><img src="used_car_analysis_files/figure-html/unnamed-chunk-6-2.png" width="672" /></p>
+<pre class="r"><code># Average price based on accident status
+average_price_accident &lt;- used_cars_dataset %&gt;%
+  group_by(accident) %&gt;%
+  summarize(avg_price = mean(price, na.rm = TRUE)) %&gt;%
+  filter(accident %in% c(&quot;At least 1 accident or damage reported&quot;, &quot;None reported&quot;))
+
+ggplot(average_price_accident, aes(x = accident, y = avg_price, fill = accident)) +
+  geom_bar(stat = &quot;identity&quot;) +
+  labs(title = &quot;Average Price of Cars by Accident Status&quot;,
+       x = &quot;Accident Status&quot;,
+       y = &quot;Average Price&quot;) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))</code></pre>
+<p><img src="used_car_analysis_files/figure-html/unnamed-chunk-6-3.png" width="672" /></p>
+<pre class="r"><code># Average Car Price by Model Year
+average_price_by_year &lt;- used_cars_dataset %&gt;%
+  group_by(model_year) %&gt;%
+  summarize(avg_price = mean(price, na.rm = TRUE)) %&gt;%
+  arrange(model_year)
+
+ggplot(average_price_by_year, aes(x = factor(model_year), y = avg_price, fill = factor(model_year))) +
+  geom_bar(stat = &quot;identity&quot;) +
+  labs(title = &quot;Average Car Price by Model Year&quot;,
+       x = &quot;Model Year&quot;,
+       y = &quot;Average Price&quot;) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8),  # Rotate and shrink x-axis labels
+        axis.title = element_text(size = 12),
+        plot.title = element_text(size = 14),
+        plot.margin = margin(10, 20, 10, 10))</code></pre>
+<p><img src="used_car_analysis_files/figure-html/unnamed-chunk-6-4.png" width="672" /></p>
+<pre class="r"><code># Mileage vs. Model Year with Trend Line
+ggplot(used_cars_dataset, aes(x = model_year, y = mileage)) +  
+  geom_point(alpha = 0.6) +  
+  geom_smooth(method = &quot;lm&quot;, color = &quot;blue&quot;) +  
+  labs(title = &quot;Mileage vs. Model Year with Trend Line&quot;,
+       x = &quot;Model Year&quot;,
+       y = &quot;Mileage&quot;) +  
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 10),
+        axis.title = element_text(size = 12),
+        plot.title = element_text(size = 14),
+        plot.margin = margin(10, 10, 10, 10)) +
+  scale_y_continuous(labels = scales::comma)</code></pre>
+<pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
+<p><img src="used_car_analysis_files/figure-html/unnamed-chunk-6-5.png" width="672" /></p>
+<pre class="r"><code># Mileage vs. Price with Trend Line
+ggplot(used_cars_dataset, aes(x = mileage, y = price)) +
+  geom_point(alpha = 0.6) + 
+  geom_smooth(method = &quot;lm&quot;, color = &quot;blue&quot;) +  
+  labs(title = &quot;Mileage vs. Price with Trend Line&quot;,
+       x = &quot;Mileage&quot;,
+       y = &quot;Price&quot;) +
+  scale_x_continuous(labels = scales::comma) +  
+  scale_y_continuous(labels = scales::comma) +  
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 10),
+        axis.title = element_text(size = 12),
+        plot.title = element_text(size = 14),
+        plot.margin = margin(10, 10, 10, 10))</code></pre>
+<pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
+<p><img src="used_car_analysis_files/figure-html/unnamed-chunk-6-6.png" width="672" /></p>
+<pre class="r"><code>peak_price &lt;- used_cars_dataset$price[which.max(table(used_cars_dataset$price))]
+
+# Histogram of price 
+ggplot(used_cars_dataset, aes(x = price)) +
+  geom_histogram(binwidth = 1000, fill = &quot;blue&quot;, color = &quot;black&quot;) +
+  labs(title = &quot;Price Distribution&quot;, x = &quot;Price&quot;, y = &quot;Count&quot;) +
+  theme_minimal() +
+  scale_x_continuous(labels = scales::comma) +
+  geom_vline(aes(xintercept = peak_price), color = &quot;red&quot;, linetype = &quot;dashed&quot;, size = 1) +  
+  geom_text(aes(x = peak_price, y = Inf, label = paste(&quot;Peak:&quot;, peak_price)), 
+            vjust = -0.5, color = &quot;red&quot;)</code></pre>
+<pre><code>## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+## ℹ Please use `linewidth` instead.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+## generated.</code></pre>
+<pre><code>## Warning in geom_text(aes(x = peak_price, y = Inf, label = paste(&quot;Peak:&quot;, : All aesthetics have length 1, but the data has 4009 rows.
+## ℹ Please consider using `annotate()` or provide this layer with data containing
+##   a single row.</code></pre>
+<p><img src="used_car_analysis_files/figure-html/unnamed-chunk-6-7.png" width="672" /></p>
+<pre class="r"><code># Correlation 
+numeric_data &lt;- used_cars_dataset %&gt;%
+  select(price, mileage, model_year)  
+
+correlation_matrix &lt;- cor(numeric_data, use = &quot;complete.obs&quot;)
+print(correlation_matrix)</code></pre>
+<pre><code>##                 price    mileage model_year
+## price       1.0000000 -0.3055281  0.1994962
+## mileage    -0.3055281  1.0000000 -0.6177204
+## model_year  0.1994962 -0.6177204  1.0000000</code></pre>
+<pre class="r"><code>corrplot(correlation_matrix, method = &quot;circle&quot;)</code></pre>
+<p><img src="used_car_analysis_files/figure-html/unnamed-chunk-6-8.png" width="672" /></p>
+<pre class="r"><code>correlation_data &lt;- melt(correlation_matrix)
+
+ggplot(correlation_data, aes(Var1, Var2, fill = value)) +
+  geom_tile(color = &quot;white&quot;) +
+  scale_fill_gradient2(low = &quot;blue&quot;, high = &quot;red&quot;, mid = &quot;white&quot;, 
+                       midpoint = 0, limit = c(-1, 1), space = &quot;Lab&quot;, 
+                       name = &quot;Correlation&quot;) +
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) +
+  labs(title = &quot;Correlation Heatmap&quot;, x = &quot;Variables&quot;, y = &quot;Variables&quot;)</code></pre>
+<p><img src="used_car_analysis_files/figure-html/unnamed-chunk-6-9.png" width="672" /></p>
+</div>
+<div id="conclusion" class="section level1">
+<h1>Conclusion:</h1>
+<p>Looking at the data, Ford is the most popular brand in total sales,
+while Bugatti is the most expensive brand. Cars with at least one
+accident report sell for approximately two times less than those with no
+reported accidents. The selling price of the model years of vehicles
+varies between cars made before 1974, rising in price likely due to the
+vintage factor and newer cars selling at higher prices likely due to
+their modernity. There is an outlier of vehicles sold in 2005, which is
+significantly higher than other years relatively close to it, which
+could spark further analysis. Cars with higher mileage also tend to sell
+less according to the trend line for the graph “Mileage vs. Price Year
+with Trend Line.” the same is actual with model year according to
+“Mileage vs. Model Year with Trend Line” and as stated earlier.</p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

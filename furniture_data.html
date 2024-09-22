@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Trager Bos" />
+
+
+<title>Analyzing Furniture Sales Data</title>
+
+<script src="furniture_data_files/header-attrs-2.27/header-attrs.js"></script>
+<script src="furniture_data_files/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="furniture_data_files/bootstrap-3.3.5/css/cerulean.min.css" rel="stylesheet" />
+<script src="furniture_data_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="furniture_data_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="furniture_data_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="furniture_data_files/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="furniture_data_files/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="furniture_data_files/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="furniture_data_files/navigation-1.1/tabsets.js"></script>
+<link href="furniture_data_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="furniture_data_files/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Analyzing Furniture Sales Data</h1>
+<h4 class="author">Trager Bos</h4>
+
+</div>
+
+
+<div id="intro" class="section level1">
+<h1>Intro:</h1>
+<p>In this analysis, we will explore a comprehensive dataset of
+furniture sales to uncover insights about sales trends, revenue
+distribution, and various pricing factors. To begin, we will install the
+necessary libraries and packages, such as tidyverse, knitr, and scales,
+which provide essential data manipulation and visualization tools.
+Following the setup, we will import the dataset from a CSV file and
+perform data cleaning to handle missing values. A summary of the cleaned
+dataset will be generated, including column names, dimensions, and a
+statistical overview. Finally, we will create visualizations to
+illustrate total sales and revenue by season, store type, and brand,
+along with scatterplots that depict the relationship between price and
+cost. This analysis aims to provide valuable insights for
+better-understanding furniture sales dynamics and identifying growth
+opportunities.</p>
+</div>
+<div id="install-apropriate-libraries-packages" class="section level1">
+<h1>Install apropriate libraries &amp; packages</h1>
+<pre class="r"><code>install.packages(&quot;tidyverse&quot;)</code></pre>
+<pre><code>## 
+## The downloaded binary packages are in
+##  /var/folders/k7/3hkxc3916d94sh54b7xgkrfh0000gn/T//RtmpSDFQJc/downloaded_packages</code></pre>
+<pre class="r"><code>install.packages(&quot;knitr&quot;)</code></pre>
+<pre><code>## 
+## The downloaded binary packages are in
+##  /var/folders/k7/3hkxc3916d94sh54b7xgkrfh0000gn/T//RtmpSDFQJc/downloaded_packages</code></pre>
+<pre class="r"><code>install.packages(&quot;scales&quot;)</code></pre>
+<pre><code>## 
+## The downloaded binary packages are in
+##  /var/folders/k7/3hkxc3916d94sh54b7xgkrfh0000gn/T//RtmpSDFQJc/downloaded_packages</code></pre>
+<pre class="r"><code>library(tidyverse)
+library(knitr)
+library(readr)
+library(scales)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;scales&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     discard</code></pre>
+<pre><code>## The following object is masked from &#39;package:readr&#39;:
+## 
+##     col_factor</code></pre>
+</div>
+<div id="import-data-set" class="section level1">
+<h1>Import data set</h1>
+<pre class="r"><code>furniture_dataset &lt;- read_csv(&quot;~/Desktop/Data sets/Furniture.csv&quot;)</code></pre>
+<pre><code>## Rows: 2500 Columns: 15
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr (7): category, material, color, location, season, store_type, brand
+## dbl (8): price, cost, sales, profit_margin, inventory, discount_percentage, ...
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div id="clean-data" class="section level1">
+<h1>Clean data</h1>
+<pre class="r"><code>furniture_dataset_clean &lt;- furniture_dataset %&gt;% na.omit()</code></pre>
+</div>
+<div id="brief-summary" class="section level1">
+<h1>Brief summary</h1>
+<pre class="r"><code>colnames(furniture_dataset_clean) #List of column names</code></pre>
+<pre><code>##  [1] &quot;price&quot;               &quot;cost&quot;                &quot;sales&quot;              
+##  [4] &quot;profit_margin&quot;       &quot;inventory&quot;           &quot;discount_percentage&quot;
+##  [7] &quot;delivery_days&quot;       &quot;category&quot;            &quot;material&quot;           
+## [10] &quot;color&quot;               &quot;location&quot;            &quot;season&quot;             
+## [13] &quot;store_type&quot;          &quot;brand&quot;               &quot;revenue&quot;</code></pre>
+<pre class="r"><code>ncol(furniture_dataset_clean) #How many columns are in data frame?</code></pre>
+<pre><code>## [1] 15</code></pre>
+<pre class="r"><code>nrow(furniture_dataset_clean) #How many rows are in data frame?</code></pre>
+<pre><code>## [1] 2500</code></pre>
+<pre class="r"><code>dim(furniture_dataset_clean)  #Dimensions of the data frame?</code></pre>
+<pre><code>## [1] 2500   15</code></pre>
+<pre class="r"><code>head(furniture_dataset_clean)  #See the first 6 rows of data frame. </code></pre>
+<pre><code>## # A tibble: 6 × 15
+##   price  cost sales profit_margin inventory discount_percentage delivery_days
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;         &lt;dbl&gt;     &lt;dbl&gt;               &lt;dbl&gt;         &lt;dbl&gt;
+## 1  219. 182.     40          16.9       105               27.8              9
+## 2  478. 385.      7          19.4       192               26.9              6
+## 3  379. 277.     32          27.1        59               21.9              2
+## 4  319. 282.     48          11.8        45               11.0              2
+## 5  120.  69.7    19          42.0        35                3.18             9
+## 6  120.  65.4     6          45.6       185               20.7              8
+## # ℹ 8 more variables: category &lt;chr&gt;, material &lt;chr&gt;, color &lt;chr&gt;,
+## #   location &lt;chr&gt;, season &lt;chr&gt;, store_type &lt;chr&gt;, brand &lt;chr&gt;, revenue &lt;dbl&gt;</code></pre>
+<pre class="r"><code>str(furniture_dataset_clean)  #See list of columns and data types (numeric, character, etc)</code></pre>
+<pre><code>## tibble [2,500 × 15] (S3: tbl_df/tbl/data.frame)
+##  $ price              : num [1:2500] 219 478 379 319 120 ...
+##  $ cost               : num [1:2500] 181.6 385 276.7 281.8 69.7 ...
+##  $ sales              : num [1:2500] 40 7 32 48 19 6 20 27 43 37 ...
+##  $ profit_margin      : num [1:2500] 16.9 19.4 27.1 11.8 42 ...
+##  $ inventory          : num [1:2500] 105 192 59 45 35 185 165 10 11 169 ...
+##  $ discount_percentage: num [1:2500] 27.8 26.94 21.95 11.01 3.18 ...
+##  $ delivery_days      : num [1:2500] 9 6 2 2 9 8 9 4 4 2 ...
+##  $ category           : chr [1:2500] &quot;Bed&quot; &quot;Chair&quot; &quot;Table&quot; &quot;Table&quot; ...
+##  $ material           : chr [1:2500] &quot;Plastic&quot; &quot;Glass&quot; &quot;Metal&quot; &quot;Glass&quot; ...
+##  $ color              : chr [1:2500] &quot;Red&quot; &quot;Blue&quot; &quot;Black&quot; &quot;Green&quot; ...
+##  $ location           : chr [1:2500] &quot;Rural&quot; &quot;Rural&quot; &quot;Suburban&quot; &quot;Rural&quot; ...
+##  $ season             : chr [1:2500] &quot;Spring&quot; &quot;Summer&quot; &quot;Fall&quot; &quot;Summer&quot; ...
+##  $ store_type         : chr [1:2500] &quot;Online&quot; &quot;Online&quot; &quot;Online&quot; &quot;Retail&quot; ...
+##  $ brand              : chr [1:2500] &quot;BrandA&quot; &quot;BrandD&quot; &quot;BrandD&quot; &quot;BrandD&quot; ...
+##  $ revenue            : num [1:2500] 3949 -3521 14286 12261 -4588 ...</code></pre>
+<pre class="r"><code>summary(furniture_dataset_clean)  #Statistical summary of data. Mainly for numerics</code></pre>
+<pre><code>##      price            cost            sales       profit_margin  
+##  Min.   : 50.7   Min.   : 26.51   Min.   : 1.00   Min.   :10.02  
+##  1st Qu.:159.1   1st Qu.:106.40   1st Qu.:13.00   1st Qu.:20.23  
+##  Median :277.6   Median :189.34   Median :25.00   Median :30.30  
+##  Mean   :274.5   Mean   :191.93   Mean   :24.92   Mean   :30.21  
+##  3rd Qu.:387.4   3rd Qu.:263.19   3rd Qu.:37.00   3rd Qu.:40.13  
+##  Max.   :499.9   Max.   :447.02   Max.   :49.00   Max.   :50.00  
+##    inventory      discount_percentage delivery_days     category        
+##  Min.   :  0.00   Min.   : 0.005556   Min.   :1.000   Length:2500       
+##  1st Qu.: 50.00   1st Qu.: 7.760214   1st Qu.:3.000   Class :character  
+##  Median : 94.00   Median :14.915143   Median :5.000   Mode  :character  
+##  Mean   : 97.72   Mean   :14.947616   Mean   :4.894                     
+##  3rd Qu.:147.00   3rd Qu.:22.292661   3rd Qu.:7.000                     
+##  Max.   :199.00   Max.   :29.991229   Max.   :9.000                     
+##    material            color             location            season         
+##  Length:2500        Length:2500        Length:2500        Length:2500       
+##  Class :character   Class :character   Class :character   Class :character  
+##  Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+##                                                                             
+##                                                                             
+##                                                                             
+##   store_type           brand              revenue      
+##  Length:2500        Length:2500        Min.   :-14215  
+##  Class :character   Class :character   1st Qu.:  1217  
+##  Mode  :character   Mode  :character   Median :  5523  
+##                                        Mean   :  5927  
+##                                        3rd Qu.: 10234  
+##                                        Max.   : 32922</code></pre>
+<pre class="r"><code>names(furniture_dataset_clean)</code></pre>
+<pre><code>##  [1] &quot;price&quot;               &quot;cost&quot;                &quot;sales&quot;              
+##  [4] &quot;profit_margin&quot;       &quot;inventory&quot;           &quot;discount_percentage&quot;
+##  [7] &quot;delivery_days&quot;       &quot;category&quot;            &quot;material&quot;           
+## [10] &quot;color&quot;               &quot;location&quot;            &quot;season&quot;             
+## [13] &quot;store_type&quot;          &quot;brand&quot;               &quot;revenue&quot;</code></pre>
+</div>
+<div id="visualizations" class="section level1">
+<h1>Visualizations</h1>
+<pre class="r"><code># Sales per season
+sales_per_season &lt;- furniture_dataset_clean %&gt;%
+  group_by(season) %&gt;%
+  summarize(total_sales = sum(sales))
+
+ggplot(sales_per_season, aes(x = season, y = total_sales, fill = season)) +
+  geom_bar(stat = &quot;identity&quot;) +
+  labs(title = &quot;Total Sales per Season&quot;, x = &quot;Season&quot;, y = &quot;Total Sales&quot;) +
+  theme_minimal() +
+  scale_fill_brewer(palette = &quot;Set3&quot;)  </code></pre>
+<p><img src="furniture_data_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code># Revenue per season
+revenue_per_season &lt;- furniture_dataset_clean %&gt;%
+  group_by(season) %&gt;%
+  summarize(total_revenue = sum(revenue))
+
+ggplot(revenue_per_season, aes(x = season, y = total_revenue, fill = season)) +
+  geom_bar(stat = &quot;identity&quot;) +
+  labs(title = &quot;Total Revenue per Season&quot;, x = &quot;Season&quot;, y = &quot;Total Revenue&quot;) +
+  theme_minimal() +
+  scale_y_continuous(labels = label_comma()) +
+  scale_fill_brewer(palette = &quot;Set3&quot;)  </code></pre>
+<p><img src="furniture_data_files/figure-html/unnamed-chunk-5-2.png" width="672" /></p>
+<pre class="r"><code># Store type sales
+sales_per_store_type &lt;- furniture_dataset_clean %&gt;%
+  group_by(store_type) %&gt;%
+  summarize(total_sales = sum(sales))
+
+ggplot(sales_per_store_type, aes(x = store_type, y = total_sales, fill = store_type)) +
+  geom_bar(stat = &quot;identity&quot;) +
+  labs(title = &quot;Total Sales per Store Type&quot;, x = &quot;Store Type&quot;, y = &quot;Total Sales&quot;) +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::label_comma()) +
+  scale_fill_brewer(palette = &quot;Set3&quot;)  </code></pre>
+<p><img src="furniture_data_files/figure-html/unnamed-chunk-5-3.png" width="672" /></p>
+<pre class="r"><code># Sales by location
+sales_per_location_store_type &lt;- furniture_dataset_clean %&gt;%
+  group_by(location, store_type) %&gt;%
+  summarize(total_sales = sum(sales))</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;location&#39;. You can override using the
+## `.groups` argument.</code></pre>
+<pre class="r"><code>ggplot(sales_per_location_store_type, aes(x = location, y = total_sales, fill = store_type)) +
+  geom_bar(stat = &quot;identity&quot;) +  # No position = &quot;dodge&quot; for stacking
+  labs(title = &quot;Total Sales by Location and Store Type&quot;, x = &quot;Location&quot;, y = &quot;Total Sales&quot;) +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::label_comma())</code></pre>
+<p><img src="furniture_data_files/figure-html/unnamed-chunk-5-4.png" width="672" /></p>
+<pre class="r"><code># Sales per brand
+sales_per_brand &lt;- furniture_dataset_clean %&gt;%
+  group_by(brand) %&gt;%
+  summarize(total_sales = sum(sales))
+
+ggplot(sales_per_brand, aes(x = &quot;&quot;, y = total_sales, fill = brand)) +
+  geom_bar(stat = &quot;identity&quot;, width = 1) +
+  coord_polar(theta = &quot;y&quot;) +  # Convert bar chart to pie chart
+  labs(title = &quot;Sales Distribution by Brand&quot;) +
+  theme_void() +  
+  scale_y_continuous(labels = scales::label_comma())</code></pre>
+<p><img src="furniture_data_files/figure-html/unnamed-chunk-5-5.png" width="672" /></p>
+<pre class="r"><code># inventory by brand
+inventory_per_brand &lt;- furniture_dataset_clean %&gt;%
+  group_by(brand) %&gt;%
+  summarize(total_inventory = sum(inventory))
+
+ggplot(inventory_per_brand, aes(x = brand, y = total_inventory, fill = brand)) +
+  geom_bar(stat = &quot;identity&quot;) +
+  labs(title = &quot;Total Inventory by Brand&quot;, x = &quot;Brand&quot;, y = &quot;Total Inventory&quot;) +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::label_comma()) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))</code></pre>
+<p><img src="furniture_data_files/figure-html/unnamed-chunk-5-6.png" width="672" /></p>
+<pre class="r"><code># Discount by brand
+discount_per_brand &lt;- furniture_dataset_clean %&gt;%
+  group_by(brand) %&gt;%
+  summarize(average_discount_percentage = mean(discount_percentage))
+
+ggplot(discount_per_brand, aes(x = brand, y = average_discount_percentage, fill = brand)) +
+  geom_bar(stat = &quot;identity&quot;) +
+  labs(title = &quot;Average Discount Percentage by Brand&quot;, x = &quot;Brand&quot;, y = &quot;Average Discount Percentage&quot;) +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::label_comma()) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))</code></pre>
+<p><img src="furniture_data_files/figure-html/unnamed-chunk-5-7.png" width="672" /></p>
+<pre class="r"><code># Price by material 
+price_per_material &lt;- furniture_dataset_clean %&gt;%
+  group_by(material) %&gt;%
+  summarize(average_price = mean(price))
+
+ggplot(price_per_material, aes(x = material, y = average_price, fill = material)) +
+  geom_bar(stat = &quot;identity&quot;) +
+  labs(title = &quot;Average Price by Material&quot;, x = &quot;Material&quot;, y = &quot;Average Price&quot;) +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::label_comma()) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))</code></pre>
+<p><img src="furniture_data_files/figure-html/unnamed-chunk-5-8.png" width="672" /></p>
+<pre class="r"><code>#Average delivery days by location
+delivery_days_per_location &lt;- furniture_dataset_clean %&gt;%
+  group_by(location) %&gt;%
+  summarize(average_delivery_days = mean(delivery_days))
+
+ggplot(furniture_dataset_clean, aes(x = location, y = delivery_days, fill = location)) +
+  geom_boxplot() +
+  labs(title = &quot;Delivery Days Distribution by Location&quot;, x = &quot;Location&quot;, y = &quot;Delivery Days&quot;) +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::label_comma()) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))</code></pre>
+<p><img src="furniture_data_files/figure-html/unnamed-chunk-5-9.png" width="672" /></p>
+<pre class="r"><code>ggplot(delivery_days_per_location, aes(x = location, y = average_delivery_days, fill = location)) +
+  geom_bar(stat = &quot;identity&quot;) +
+  labs(title = &quot;Average Delivery Days by Location&quot;, x = &quot;Location&quot;, y = &quot;Average Delivery Days&quot;) +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::label_comma()) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))</code></pre>
+<p><img src="furniture_data_files/figure-html/unnamed-chunk-5-10.png" width="672" /></p>
+<pre class="r"><code># Sales by color
+sales_per_color &lt;- furniture_dataset_clean %&gt;%
+  group_by(color) %&gt;%
+  summarize(total_sales = sum(sales))
+
+ggplot(sales_per_color, aes(x = color, y = total_sales, fill = color)) +
+  geom_bar(stat = &quot;identity&quot;) +
+  labs(title = &quot;Total Sales by Color&quot;, x = &quot;Color&quot;, y = &quot;Total Sales&quot;) +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::label_comma()) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))</code></pre>
+<p><img src="furniture_data_files/figure-html/unnamed-chunk-5-11.png" width="672" /></p>
+<pre class="r"><code># Revenue by location
+revenue_per_location &lt;- furniture_dataset_clean %&gt;%
+  group_by(location) %&gt;%
+  summarize(total_revenue = sum(revenue))
+
+ggplot(revenue_per_location, aes(x = location, y = total_revenue, fill = location)) +
+  geom_bar(stat = &quot;identity&quot;) +
+  labs(title = &quot;Total Revenue by Location&quot;, x = &quot;Location&quot;, y = &quot;Total Revenue&quot;) +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::label_comma()) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))</code></pre>
+<p><img src="furniture_data_files/figure-html/unnamed-chunk-5-12.png" width="672" /></p>
+<pre class="r"><code># Price vs Cost scatterplot with trend line
+ggplot(furniture_dataset_clean, aes(x = cost, y = price)) +
+  geom_point(aes(color = price), alpha = 0.7) +
+  geom_smooth(method = &quot;lm&quot;, color = &quot;blue&quot;, se = FALSE) +  
+  labs(title = &quot;Price vs. Cost&quot;, x = &quot;Cost&quot;, y = &quot;Price&quot;) +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::label_comma()) +
+  scale_x_continuous(labels = scales::label_comma())</code></pre>
+<pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
+<p><img src="furniture_data_files/figure-html/unnamed-chunk-5-13.png" width="672" /></p>
+<pre class="r"><code># Price vs Cost by Brand with trend line
+ggplot(furniture_dataset_clean, aes(x = cost, y = price, color = brand)) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = &quot;lm&quot;, aes(group = brand), se = FALSE) +  
+  labs(title = &quot;Price vs. Cost by Brand&quot;, x = &quot;Cost&quot;, y = &quot;Price&quot;) +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::label_comma()) +
+  scale_x_continuous(labels = scales::label_comma()) +
+  theme(legend.position = &quot;right&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
+<p><img src="furniture_data_files/figure-html/unnamed-chunk-5-14.png" width="672" /></p>
+<pre class="r"><code># Average price and cost by brand
+averages_by_brand &lt;- furniture_dataset_clean %&gt;%
+  group_by(brand) %&gt;%
+  summarize(
+    average_price = mean(price),
+    average_cost = mean(cost)
+  )
+
+averages_long &lt;- averages_by_brand %&gt;%
+  pivot_longer(cols = c(average_price, average_cost), names_to = &quot;metric&quot;, values_to = &quot;value&quot;)
+
+ggplot(averages_long, aes(x = brand, y = value, fill = metric)) +
+  geom_bar(stat = &quot;identity&quot;, position = &quot;dodge&quot;) +
+  labs(title = &quot;Average Price and Cost by Brand&quot;, x = &quot;Brand&quot;, y = &quot;Value&quot;) +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::label_comma()) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) </code></pre>
+<p><img src="furniture_data_files/figure-html/unnamed-chunk-5-15.png" width="672" /></p>
+<pre class="r"><code># Revenue by category
+revenue_by_category &lt;- furniture_dataset_clean %&gt;%
+  group_by(category) %&gt;%
+  summarize(total_revenue = sum(revenue))
+
+ggplot(revenue_by_category, aes(x = category, y = total_revenue, fill = category)) +
+  geom_bar(stat = &quot;identity&quot;) +
+  labs(title = &quot;Total Revenue by Category&quot;, x = &quot;Category&quot;, y = &quot;Total Revenue&quot;) +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::label_comma()) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))</code></pre>
+<p><img src="furniture_data_files/figure-html/unnamed-chunk-5-16.png" width="672" /></p>
+</div>
+<div id="conclusion" class="section level1">
+<h1>Conclusion:</h1>
+<p>Looking at the data, Fall and Winter are the most popular seasons for
+total sales of furniture; however, for total revenue, Winter and Spring
+are the most successful seasons. The company’s online store is more
+popular for total sales than its brick-and-mortar counterpart. The
+company’s rural stores make more in-person and online sales than its
+suburban and urban stores, and the rural store hasest revenue. Brand C
+is the most popular brand across the stores, with Brand A closely behind
+it and Brand B being the least popular. This could likely be due to
+Brand A and Brand C having the most discounts per brand. Brand A is also
+the most profitable for the store, as the price revenue analysis is
+detailed. According to the data, fabric is the most popular material for
+furniture,, and Black and White furniture are the most popular colors.
+The table is the most popular type of furniture at the store. The
+delivery days for the location of the stores (Rural, suburban, and
+urban) are all relatively the same, with urban stores taking slightly
+longer.</p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
