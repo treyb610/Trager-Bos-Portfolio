@@ -6,131 +6,113 @@
     <title>Trager Bos Portfolio</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f0f0f5;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            background-color: #f4f4f4;
         }
         header {
-            background-color: #4A90E2;
-            width: 100%;
-            padding: 20px;
-            text-align: center;
+            background-color: #333;
             color: white;
-        }
-        .navbar {
-            display: flex;
-            justify-content: center;
-            margin: 20px 0;
+            padding: 10px 20px;
+            text-align: center;
         }
         .tab {
-            padding: 15px 30px;
-            border: none;
-            background-color: #fff;
-            color: #4A90E2;
-            margin: 0 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            background-color: #444;
         }
-        .tab:hover {
-            background-color: #4A90E2;
+        .tab button {
+            background-color: inherit;
             color: white;
+            padding: 14px 16px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .tab button:hover {
+            background-color: #555;
         }
         .tab-content {
             display: none;
-            width: 90%;
-            max-width: 600px;
             padding: 20px;
             background-color: white;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            border-radius: 5px;
-            margin: 20px 0;
+            border-top: 1px solid #ddd;
         }
-        .active {
+        .tab-content.active {
             display: block;
-        }
-        .dropdown-content a {
-            display: block;
-            padding: 10px;
-            text-decoration: none;
-            color: #4A90E2;
-            margin: 5px 0;
-            transition: background-color 0.3s;
-        }
-        .dropdown-content a:hover {
-            background-color: #f1f1f1;
         }
         footer {
-            margin-top: auto;
-            padding: 10px;
-            font-size: 0.9em;
-            color: #777;
+            text-align: center;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Trager Bos Portfolio</h1>
-    </header>
+<header>
+    <h1>Trager Bos Portfolio</h1>
+</header>
 
-    <div class="navbar">
-        <button class="tab" onclick="showTab('data-analysis')">Data Analysis Projects</button>
-        <button class="tab" onclick="showTab('writing')">My Writing</button>
-        <button class="tab" onclick="showTab('contact')">Contact</button>
-    </div>
+<div class="tab">
+    <button class="tablinks" onclick="openTab(event, 'DataAnalysis')">Data Analysis Projects</button>
+    <button class="tablinks" onclick="openTab(event, 'Writing')">My Writing</button>
+    <button class="tablinks" onclick="openTab(event, 'Contact')">Contact</button>
+</div>
 
-    <div id="data-analysis" class="tab-content">
-        <h2>Data Analysis Projects</h2>
-        <div class="dropdown-content">
-            <a href="nyc_dataset.html">NYC Dataset Analysis</a>
-            <a href="furniture_data.html">Furniture Data Analysis</a>
-            <a href="used_car_analysis.html">Used Car Analysis</a>
-            <a href="javascript:history.back()">Back</a>
-        </div>
-    </div>
+<div id="DataAnalysis" class="tab-content">
+    <h2>Data Analysis Projects</h2>
+    <ul>
+        <li><a href="nyc_dataset.html">NYC Dataset Analysis</a></li>
+        <li><a href="furniture_data.html">Furniture Data Analysis</a></li>
+        <li><a href="used_car_analysis.html">Used Car Analysis</a></li>
+    </ul>
+    <button onclick="goBack()">Back</button>
+</div>
 
-    <div id="writing" class="tab-content">
-        <h2>My Writing</h2>
-        <div class="dropdown-content">
-            <a href="gothic_paper.html">Gothic Paper</a>
-            <a href="Americanless.html">Americanless</a>
-            <a href="hist_paper.html">History Paper</a>
-            <a href="javascript:history.back()">Back</a>
-        </div>
-    </div>
+<div id="Writing" class="tab-content">
+    <h2>My Writing</h2>
+    <ul>
+        <li><a href="gothic_paper.html">The Role of the Supernatural in the Gothic</a></li>
+        <li><a href="Americanless.html">Americanless</a></li>
+        <li><a href="hist_paper.html">Roots of Crime in the U.S.</a></li>
+    </ul>
+    <button onclick="goBack()">Back</button>
+</div>
 
-    <div id="contact" class="tab-content">
-        <h2>Contact</h2>
-        <div class="dropdown-content">
-            <a href="https://www.linkedin.com/in/trager-bos-083a71318/" target="_blank">LinkedIn</a>
-            <a href="mailto:trager.bos@temple.edu">Email Me</a>
-            <a href="javascript:history.back()">Back</a>
-        </div>
-    </div>
+<div id="Contact" class="tab-content">
+    <h2>Contact</h2>
+    <p>Email: <a href="mailto:trager.bos@temple.edu">trager.bos@temple.edu</a></p>
+    <p>LinkedIn: <a href="https://www.linkedin.com/in/trager-bos-083a71318/" target="_blank">View my LinkedIn</a></p>
+    <button onclick="goBack()">Back</button>
+</div>
 
-    <footer>
-        &copy; 2024 Trager Bos
-    </footer>
+<footer>
+    <p>&copy; 2024 Trager Bos</p>
+</footer>
 
-    <script>
-        function showTab(tabId) {
-            const tabContents = document.querySelectorAll('.tab-content');
-            tabContents.forEach(content => {
-                content.classList.remove('active');
-            });
-            document.getElementById(tabId).classList.add('active');
+<script>
+    function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";  
         }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(tabName).style.display = "block";  
+        evt.currentTarget.className += " active";
+    }
 
-        // Show the first tab by default
-        showTab('data-analysis');
-    </script>
+    function goBack() {
+        var tabcontent = document.getElementsByClassName("tab-content");
+        for (var i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+    }
+</script>
 
 </body>
 </html>
