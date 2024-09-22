@@ -33,6 +33,7 @@
             width: 100%;
             height: 600px; /* Adjust height as needed */
             border: none;
+            display: none; /* Initially hide the iframe */
         }
     </style>
 </head>
@@ -49,7 +50,7 @@
     </div>
 
     <h2>View Project</h2>
-    <iframe id="pdf-viewer" src="" style="display:none;"></iframe>
+    <iframe id="pdf-viewer" src=""></iframe>
 
     <script>
         function showPDF(pdfFile) {
