@@ -12,107 +12,87 @@
             background-color: #f4f4f4;
         }
         header {
-            background-color: #333;
-            color: white;
+            background: #333;
+            color: #fff;
             padding: 10px 20px;
             text-align: center;
         }
-        .tab {
+        nav {
             display: flex;
             justify-content: center;
-            background-color: #444;
+            background: #444;
         }
-        .tab button {
-            background-color: inherit;
-            color: white;
-            padding: 14px 16px;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s;
+        nav a {
+            padding: 15px 20px;
+            color: #fff;
+            text-decoration: none;
+            transition: background 0.3s;
         }
-        .tab button:hover {
-            background-color: #555;
+        nav a:hover {
+            background: #555;
         }
         .tab-content {
             display: none;
             padding: 20px;
-            background-color: white;
-            border-top: 1px solid #ddd;
+            background: #fff;
+            margin: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        .tab-content.active {
+        .active {
             display: block;
-        }
-        footer {
-            text-align: center;
-            margin-top: 20px;
         }
     </style>
 </head>
 <body>
+    <header>
+        <h1>Trager Bos Portfolio</h1>
+    </header>
+    <nav>
+        <a href="#" onclick="showTab('home')">Home</a>
+        <a href="#" onclick="showTab('data-analysis')">Data Analysis Projects</a>
+        <a href="#" onclick="showTab('writing')">My Writing</a>
+        <a href="#" onclick="showTab('contact')">Contact</a>
+    </nav>
 
-<header>
-    <h1>Trager Bos Portfolio</h1>
-</header>
+    <div id="home" class="tab-content active">
+        <h2>Welcome to my portfolio!</h2>
+        <p>I hold a degree in English from Temple University, where I developed a strong foundation in critical thinking, communication, and creative expression. I've earned certificates in Digital Marketing and Data Analytics from Google to complement my academic background. These credentials have equipped me with the skills to analyze data-driven insights and craft compelling narratives that resonate with diverse audiences.</p>
+        <p>I am passionate about leveraging my language, marketing, and data analytics knowledge to create impactful solutions and drive results. Thank you for visiting, and I look forward to sharing my work with you!</p>
+    </div>
 
-<div class="tab">
-    <button class="tablinks" onclick="openTab(event, 'DataAnalysis')">Data Analysis Projects</button>
-    <button class="tablinks" onclick="openTab(event, 'Writing')">My Writing</button>
-    <button class="tablinks" onclick="openTab(event, 'Contact')">Contact</button>
-</div>
+    <div id="data-analysis" class="tab-content">
+        <h2>Data Analysis Projects</h2>
+        <ul>
+            <li><a href="nyc_dataset.html">NYC Dataset Analysis</a></li>
+            <li><a href="furniture_data.html">Furniture Data Analysis</a></li>
+            <li><a href="used_car_analysis.html">Used Car Analysis</a></li>
+        </ul>
+    </div>
 
-<div id="DataAnalysis" class="tab-content">
-    <h2>Data Analysis Projects</h2>
-    <ul>
-        <li><a href="nyc_dataset.html">NYC Dataset Analysis</a></li>
-        <li><a href="furniture_data.html">Furniture Data Analysis</a></li>
-        <li><a href="used_car_analysis.html">Used Car Analysis</a></li>
-    </ul>
-    <button onclick="goBack()">Back</button>
-</div>
+    <div id="writing" class="tab-content">
+        <h2>My Writing</h2>
+        <ul>
+            <li><a href="gothic_paper.html">The Role of the Supernatural in the Gothic</a></li>
+            <li><a href="Americanless.html">Americanless</a></li>
+            <li><a href="hist_paper.html">Roots of Crime in the U.S.</a></li>
+        </ul>
+    </div>
 
-<div id="Writing" class="tab-content">
-    <h2>My Writing</h2>
-    <ul>
-        <li><a href="gothic_paper.html">The Role of the Supernatural in the Gothic</a></li>
-        <li><a href="Americanless.html">Americanless</a></li>
-        <li><a href="hist_paper.html">Roots of Crime in the U.S.</a></li>
-    </ul>
-    <button onclick="goBack()">Back</button>
-</div>
+    <div id="contact" class="tab-content">
+        <h2>Contact</h2>
+        <p>Email: <a href="mailto:trager.bos@temple.edu">trager.bos@temple.edu</a></p>
+        <p>LinkedIn: <a href="https://www.linkedin.com/in/trager-bos-083a71318/">Visit my LinkedIn</a></p>
+    </div>
 
-<div id="Contact" class="tab-content">
-    <h2>Contact</h2>
-    <p>Email: <a href="mailto:trager.bos@temple.edu">trager.bos@temple.edu</a></p>
-    <p>LinkedIn: <a href="https://www.linkedin.com/in/trager-bos-083a71318/" target="_blank">View my LinkedIn</a></p>
-    <button onclick="goBack()">Back</button>
-</div>
-
-<footer>
-    <p>&copy; 2024 Trager Bos</p>
-</footer>
-
-<script>
-    function openTab(evt, tabName) {
-        var i, tabcontent, tablinks;
-        tabcontent = document.getElementsByClassName("tab-content");
-        for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";  
+    <script>
+        function showTab(tabId) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
         }
-        tablinks = document.getElementsByClassName("tablinks");
-        for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-        document.getElementById(tabName).style.display = "block";  
-        evt.currentTarget.className += " active";
-    }
-
-    function goBack() {
-        var tabcontent = document.getElementsByClassName("tab-content");
-        for (var i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";
-        }
-    }
-</script>
-
+    </script>
 </body>
 </html>
