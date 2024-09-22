@@ -29,6 +29,11 @@
         .dropdown:hover .dropdown-content {
             display: block; /* Show the dropdown on hover */
         }
+        iframe {
+            width: 100%;
+            height: 600px; /* Adjust height as needed */
+            border: none;
+        }
     </style>
 </head>
 <body>
@@ -37,17 +42,21 @@
     <div class="dropdown">
         <button>Projects</button>
         <div class="dropdown-content">
-            <a href="furniture-data.pdf.html">Furniture Data Analysis</a>
-            <a href="nyc-dataset.pdf.html">NYC Dataset Analysis</a>
-            <a href="used-car-analysis.pdf.html">Used Car Analysis</a>
+            <a href="#" onclick="showPDF('furniture-data.pdf')">Furniture Data Analysis</a>
+            <a href="#" onclick="showPDF('nyc-dataset.pdf')">NYC Dataset Analysis</a>
+            <a href="#" onclick="showPDF('used-car-analysis.pdf')">Used Car Analysis</a>
         </div>
     </div>
 
+    <h2>View Project</h2>
+    <iframe id="pdf-viewer" src="" style="display:none;"></iframe>
+
     <script>
-        document.querySelector('.dropdown button').addEventListener('click', function() {
-            var dropdownContent = document.querySelector('.dropdown-content');
-            dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
-        });
+        function showPDF(pdfFile) {
+            const pdfViewer = document.getElementById('pdf-viewer');
+            pdfViewer.src = pdfFile;
+            pdfViewer.style.display = 'block'; // Show the iframe
+        }
     </script>
 </body>
 </html>
