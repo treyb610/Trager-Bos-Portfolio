@@ -1,98 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trager Bos Portfolio</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        header {
-            background: #333;
-            color: #fff;
-            padding: 10px 20px;
-            text-align: center;
-        }
-        nav {
-            display: flex;
-            justify-content: center;
-            background: #444;
-        }
-        nav a {
-            padding: 15px 20px;
-            color: #fff;
-            text-decoration: none;
-            transition: background 0.3s;
-        }
-        nav a:hover {
-            background: #555;
-        }
-        .tab-content {
-            display: none;
-            padding: 20px;
-            background: #fff;
-            margin: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .active {
-            display: block;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trager Bos Portfolio</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f7f9fc;
+    }
+    header {
+      background-color: #007bff;
+      padding: 20px;
+      text-align: center;
+      color: white;
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .tab {
+      padding: 14px 20px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 0 10px;
+      transition: background-color 0.3s;
+    }
+    .tab:hover {
+      background-color: #0056b3;
+    }
+    .content {
+      display: none;
+      padding: 20px;
+      background-color: #ffffff;
+      margin-top: 20px;
+      text-align: center;
+    }
+    .active {
+      display: block;
+    }
+    .back-button {
+      display: inline-block;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: white;
+      background-color: #007bff;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+      margin-top: 20px;
+    }
+    .back-button:hover {
+      background-color: #0056b3;
+    }
+    footer {
+      text-align: center;
+      margin-top: 20px;
+      padding: 20px;
+      background-color: #f1f1f1;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Trager Bos Portfolio</h1>
-    </header>
-    <nav>
-        <a href="#" onclick="showTab('home')">Home</a>
-        <a href="#" onclick="showTab('data-analysis')">Data Analysis Projects</a>
-        <a href="#" onclick="showTab('writing')">My Writing</a>
-        <a href="#" onclick="showTab('contact')">Contact</a>
-    </nav>
 
-    <div id="home" class="tab-content active">
-        <h2>Welcome to my portfolio!</h2>
-        <p>I hold a degree in English from Temple University, where I developed a strong foundation in critical thinking, communication, and creative expression. I've earned certificates in Digital Marketing and Data Analytics from Google to complement my academic background. These credentials have equipped me with the skills to analyze data-driven insights and craft compelling narratives that resonate with diverse audiences.</p>
-        <p>I am passionate about leveraging my language, marketing, and data analytics knowledge to create impactful solutions and drive results. Thank you for visiting, and I look forward to sharing my work with you!</p>
-    </div>
+<header>
+  <h1>Trager Bos Portfolio</h1>
+</header>
 
-    <div id="data-analysis" class="tab-content">
-        <h2>Data Analysis Projects</h2>
-        <ul>
-            <li><a href="nyc_dataset.html">NYC Dataset Analysis</a></li>
-            <li><a href="furniture_data.html">Furniture Data Analysis</a></li>
-            <li><a href="used_car_analysis.html">Used Car Analysis</a></li>
-        </ul>
-    </div>
+<nav>
+  <button class="tab" onclick="showContent('home')">Home</button>
+  <button class="tab" onclick="showContent('data-projects')">Data Analysis Projects</button>
+  <button class="tab" onclick="showContent('writing')">My Writing</button>
+  <button class="tab" onclick="showContent('contact')">Contact</button>
+</nav>
 
-    <div id="writing" class="tab-content">
-        <h2>My Writing</h2>
-        <ul>
-            <li><a href="gothic_paper.html">The Role of the Supernatural in the Gothic</a></li>
-            <li><a href="Americanless.html">Americanless</a></li>
-            <li><a href="hist_paper.html">Roots of Crime in the U.S.</a></li>
-        </ul>
-    </div>
+<!-- Home Section -->
+<div id="home" class="content active">
+  <p>Welcome to my portfolio! I hold a degree in English from Temple University, where I developed a strong foundation in critical thinking, communication, and creative expression. I've earned certificates in Digital Marketing and Data Analytics from Google to complement my academic background. These credentials have equipped me with the skills to analyze data-driven insights and craft compelling narratives that resonate with diverse audiences.
+  I am passionate about leveraging my language, marketing, and data analytics knowledge to create impactful solutions and drive results. Thank you for visiting, and I look forward to sharing my work with you!</p>
+</div>
 
-    <div id="contact" class="tab-content">
-        <h2>Contact</h2>
-        <p>Email: <a href="mailto:trager.bos@temple.edu">trager.bos@temple.edu</a></p>
-        <p>LinkedIn: <a href="https://www.linkedin.com/in/trager-bos-083a71318/">Visit my LinkedIn</a></p>
-    </div>
+<!-- Data Analysis Projects Section -->
+<div id="data-projects" class="content">
+  <h2>Data Analysis Projects</h2>
+  <ul>
+    <li><a href="nyc_dataset.html">NYC Dataset Analysis</a></li>
+    <li><a href="furniture_data.html">Furniture Data Analysis</a></li>
+    <li><a href="used_car_analysis.html">Used Car Analysis</a></li>
+  </ul>
+</div>
 
-    <script>
-        function showTab(tabId) {
-            const tabs = document.querySelectorAll('.tab-content');
-            tabs.forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.getElementById(tabId).classList.add('active');
-        }
-    </script>
+<!-- Writing Section -->
+<div id="writing" class="content">
+  <h2>My Writing</h2>
+  <ul>
+    <li><a href="gothic_paper.html">The Role of the Supernatural in the Gothic</a></li>
+    <li><a href="Americanless.html">Americanless</a></li>
+    <li><a href="hist_paper.html">Roots of Crime in the U.S</a></li>
+  </ul>
+</div>
+
+<!-- Contact Section -->
+<div id="contact" class="content">
+  <h2>Contact Me</h2>
+  <p><a href="https://www.linkedin.com/in/trager-bos-083a71318/" target="_blank">LinkedIn</a></p>
+  <p>Email: <a href="mailto:trager.bos@temple.edu">trager.bos@temple.edu</a></p>
+</div>
+
+<footer>
+  <p>© Trager Bos</p>
+</footer>
+
+<script>
+  function showContent(tabName) {
+    var i;
+    var x = document.getElementsByClassName("content");
+    for (i = 0; i < x.length; i++) {
+      x[i].classList.remove("active");
+    }
+    document.getElementById(tabName).classList.add("active");
+  }
+</script>
+
 </body>
 </html>
